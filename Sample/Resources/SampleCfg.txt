@@ -1,0 +1,25 @@
+# The following settings will be added to the global
+# section, because we have not specified any section above.
+SomeInteger = 10
+SomeFloat = 20.05
+
+# An array is identified by the brackets surrounding the value.
+AnArray = {0,2,5,6}
+
+# This is a section.
+# All settings below this section will be part of it
+# until another section is declared.
+[Video]
+
+Width = 1920 # this is an inline comment.
+Height = 1200 # inline comments are parsed by SharpConfig.
+Format = RGB32
+
+[OtherProperties]
+
+# A boolean can be represented by one of the following values:
+# true:   yes, 1, true, on
+# false:  no, 0, false, off
+ABoolean = yes
+
+BooleanArray = {on,off,yes,no}
