@@ -5,6 +5,9 @@ SharpConfig is an easy-to-use CFG/INI configuration library for .NET.
 You can use SharpConfig in your .NET applications to add the functionality
 to read, modify and save configuration files and streams, in either text or binary format.
 
+> If SharpConfig has helped you and you feel like donating, [feel free](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WWN94LMDN5HMC)!
+> Donations help to keep the development of SharpConfig active.
+
 A configuration file example:
 ```cfg
 [General]
