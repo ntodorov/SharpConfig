@@ -1,4 +1,4 @@
-![sharpconfig_logo.png](https://bitbucket.org/repo/ER5Ajb/images/1435446224-sharpconfig_logo.png)
+![sharpconfig_logo.png](sharpconfig_logo.png)
 
 SharpConfig is an easy-to-use CFG/INI configuration library for .NET.
 
