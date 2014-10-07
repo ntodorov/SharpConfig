@@ -59,9 +59,6 @@ This array can be interpreted as any type array that can be converted from 0, 2,
 
 Reading this array is simple:
 ```csharp
-Section section = config["General"];
-Setting setting = section["MyArray"];
-
 object[] myArray = config["General"]["MyArray"].GetValue<object[]>();
 ```
 
