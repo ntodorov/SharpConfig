@@ -105,7 +105,7 @@ Object Mapping
 ---
 
 A nice-to-have in SharpConfig is the mapping of sections to objects.
-If you have a structure and enumeration in C# like this:
+If you have a class and enumeration in C# like this:
 ```csharp
 class Person
 {
@@ -145,3 +145,6 @@ Installing via NuGet
 
 You can install SharpConfig via the following NuGet command:
 > Install-Package sharpconfig
+
+
+[NuGet Page](https://www.nuget.org/packages/sharpconfig/)
