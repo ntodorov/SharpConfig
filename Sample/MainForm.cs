@@ -163,7 +163,7 @@ namespace Sample
 
         private void picBoxLogo_Click( object sender, EventArgs e )
         {
-            Process.Start( @"https://bitbucket.org/hokares/sharpconfig" );
+            Process.Start( @"https://github.com/cemdervis/SharpConfig" );
         }
 
         private void picBoxLogo_MouseEnter( object sender, EventArgs e )
