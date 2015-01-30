@@ -36,55 +36,86 @@ namespace SharpConfig
             mLineNumber = 0;
 
             Configuration config = new Configuration();
-            Section currentSection = config.GlobalSection;
+            Section currentSection = null;
+            var preComments = new List<Comment>();
 
-            using ( var reader = new StringReader( source ) )
+            using (var reader = new StringReader( source ))
             {
                 string line = null;
 
                 // Read until EOF.
-                while ( ( line = reader.ReadLine() ) != null )
+                while ((line = reader.ReadLine()) != null)
                 {
                     mLineNumber++;
 
                     // Remove all leading / trailing white-spaces.
                     line = line.Trim();
 
+                    // Empty line? If so, skip.
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
                     int commentIndex = 0;
                     var comment = ParseComment( line, out commentIndex );
 
-                    // Strip away the comments of this line.
-                    if ( comment != null )
+                    if (commentIndex == 0)
+                    {
+                        // This is a comment line (pre-comment).
+                        // Add it to the list of pre-comments.
+                        preComments.Add( comment );
+                        continue;
+                    }
+                    else if (commentIndex > 0)
+                    {
+                        // Strip away the comments of this line.
                         line = line.Remove( commentIndex ).Trim();
-
-                    // If the line has no value, skip it.
-                    if ( string.IsNullOrEmpty( line ) )
-                        continue;
-
-                    // If the line is empty after we've stripped the comments, it means
-                    // the line was a comment to begin with, so skip.
-                    if ( string.IsNullOrEmpty( line ) )
-                        continue;
+                    }
 
                     // Sections start with a '['.
-                    if ( line.StartsWith( "[" ) )
+                    if (line.StartsWith( "[" ))
                     {
                         currentSection = ParseSection( line );
-
-                        // If the global section was referenced,
-                        // 'currentSection' will be null, so we'll need to correct it.
-                        if ( currentSection == null )
-                            currentSection = config.GlobalSection;
-
                         currentSection.Comment = comment;
+                        
+                        if (config.Contains(currentSection.Name))
+                        {
+                            throw new ParserException( string.Format(
+                                "The section '{0}' was already declared in the configuration.",
+                                currentSection.Name ), mLineNumber );
+                        }
 
-                        if ( !currentSection.Name.Equals( Configuration.GlobalSectionName ) )
-                            config.Add( currentSection );
+                        if (preComments.Count > 0)
+                        {
+                            currentSection.mPreComments = new List<Comment>( preComments );
+                            preComments.Clear();
+                        }
+
+                        config.mSections.Add( currentSection );
                     }
                     else
                     {
                         Setting setting = ParseSetting( line );
                         setting.Comment = comment;
+                        
+                        if (currentSection == null)
+                        {
+                            throw new ParserException( string.Format(
+                                "The setting '{0}' has to be in a section.",
+                                setting.Name ), mLineNumber );
+                        }
+
+                        if (currentSection.Contains( setting.Name ))
+                        {
+                            throw new ParserException( string.Format(
+                                "The setting '{0}' was already declared in the section.",
+                                setting.Name ), mLineNumber );
+                        }
+
+                        if (preComments.Count > 0)
+                        {
+                            setting.mPreComments = new List<Comment>( preComments );
+                            preComments.Clear();
+                        }
 
                         currentSection.Add( setting );
                     }
@@ -179,11 +210,6 @@ namespace SharpConfig
 
             // Read the section name, and trim all leading / trailing white-spaces.
             string sectionName = line.Substring( 1, line.Length - 2 ).Trim();
-
-            // Check if the global section is specified.
-            // If so, return a null reference instead of creating a new section.
-            if ( sectionName.Equals( Configuration.GlobalSectionName ) )
-                return null;
 
             // Otherwise, return a fresh section.
             return new Section( sectionName );

@@ -46,17 +46,36 @@ namespace SharpConfig
             var sb = new StringBuilder();
 
             // Write all sections.
+            bool isFirstSection = true;
+
             foreach ( var section in this )
             {
+                // Leave some space between this section and the element that is above,
+                // if this section has pre-comments and isn't the first section in the configuration.
+                if (!isFirstSection &&
+                    section.mPreComments != null && section.mPreComments.Count > 0)
+                {
+                    sb.AppendLine();
+                }
+
                 sb.AppendLine( section.ToString( true ) );
 
                 // Write all settings.
                 foreach ( var setting in section )
                 {
+                    // Leave some space between this setting and the element that is above,
+                    // if this element has pre-comments.
+                    if (setting.mPreComments != null && setting.mPreComments.Count>0)
+                    {
+                        sb.AppendLine();
+                    }
+
                     sb.AppendLine( setting.ToString( true ) );
                 }
 
                 sb.AppendLine();
+
+                isFirstSection = false;
             }
 
             // Replace triple new-lines with double new-lines.
@@ -101,15 +120,20 @@ namespace SharpConfig
             {
                 writer.Write( SectionCount );
 
-                foreach ( var section in this )
+                foreach (var section in this)
                 {
                     writer.Write( section.Name );
                     writer.Write( section.SettingCount );
 
-                    foreach ( var setting in section )
+                    SerializeComments( writer, section );
+
+                    // Write the section's settings.
+                    foreach (var setting in section)
                     {
                         writer.Write( setting.Name );
                         writer.Write( setting.Value );
+
+                        SerializeComments( writer, setting );
                     }
                 }
             }
@@ -117,6 +141,35 @@ namespace SharpConfig
             {
                 if ( ownWriter )
                     writer.Close();
+            }
+        }
+
+        private static void SerializeComments( BinaryWriter writer, ConfigurationElement element )
+        {
+            // Write the comment.
+            var comment = element.Comment;
+
+            writer.Write( comment != null );
+            if (comment != null)
+            {
+                writer.Write( comment.Symbol );
+                writer.Write( comment.Value );
+            }
+
+            // Write the pre-comments.
+            var preComments = element.mPreComments;
+
+            bool hasPreComments = preComments != null && preComments.Count > 0;
+
+            writer.Write( hasPreComments ? preComments.Count : 0 );
+
+            if (hasPreComments)
+            {
+                foreach (var preComment in preComments)
+                {
+                    writer.Write( preComment.Symbol );
+                    writer.Write( preComment.Value );
+                }
             }
         }
 

@@ -32,6 +32,7 @@ namespace SharpConfig
     {
         private string mName;
         private Comment mComment;
+        internal List<Comment> mPreComments;
 
         internal ConfigurationElement( string name )
         {
@@ -63,6 +64,20 @@ namespace SharpConfig
         {
             get { return mComment; }
             set { mComment = value; }
+        }
+
+        /// <summary>
+        /// Gets the list of comments above this element.
+        /// </summary>
+        public List<Comment> PreComments
+        {
+            get
+            {
+                if (mPreComments == null)
+                    mPreComments = new List<Comment>();
+
+                return mPreComments;
+            }
         }
     }
 }

@@ -82,9 +82,9 @@
     <None Include="Resources\SampleCfg.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharpConfig\SharpConfig NET 20.csproj">
+    <ProjectReference Include="..\SharpConfig\SharpConfig.csproj">
       <Project>{47435426-6569-4208-868e-25c0519f1f0f}</Project>
-      <Name>SharpConfig NET 20</Name>
+      <Name>SharpConfig</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -81,5 +81,11 @@ namespace SharpConfig
             return string.Format( "{0} {1}", Symbol, Value ?? string.Empty );
         }
 
+        // Used by Setting and Section in ToString().
+        internal static string ConvertToString( Comment comment )
+        {
+            return comment.ToString();
+        }
+
     }
 }

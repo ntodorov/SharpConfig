@@ -39,18 +39,10 @@ namespace SharpConfig
     {
         #region Fields
 
-        /// <summary>
-        /// The name of the global section.
-        /// The default value is "General".
-        /// </summary>
-        public const string GlobalSectionName = "General";
-
         private static NumberFormatInfo mNumberFormat;
-        private static bool mIsCaseSensitive;
         private static char[] mValidCommentChars;
 
         private List<Section> mSections;
-        private Section mGlobalSection;
 
         #endregion
 
@@ -59,7 +51,6 @@ namespace SharpConfig
         static Configuration()
         {
             mNumberFormat = CultureInfo.InvariantCulture.NumberFormat;
-            mIsCaseSensitive = true;
             mValidCommentChars = new[] { '#', ';', '\'' };
         }
 
@@ -69,9 +60,6 @@ namespace SharpConfig
         public Configuration()
         {
             mSections = new List<Section>();
-            mGlobalSection = new Section( GlobalSectionName );
-
-            mSections.Add( mGlobalSection );
         }
 
         #endregion
@@ -113,18 +101,11 @@ namespace SharpConfig
         }
 
         /// <summary>
-        /// Clears the configuration of all sections but the global section.
+        /// Clears the configuration of all sections.
         /// </summary>
         public void Clear()
         {
-            for ( int i = 0; i < mSections.Count; i++ )
-            {
-                if ( mSections[i] != mGlobalSection )
-                {
-                    mSections.RemoveAt( i );
-                    i--;
-                }
-            }
+            mSections.Clear();
         }
 
         /// <summary>
@@ -138,6 +119,16 @@ namespace SharpConfig
         }
 
         /// <summary>
+        /// Determines whether a specifically named setting is contained in the section.
+        /// </summary>
+        /// <param name="sectionName">The name of the section.</param>
+        /// <returns>True if the setting is contained in the section; false otherwise.</returns>
+        public bool Contains( string sectionName )
+        {
+            return GetSection( sectionName ) != null;
+        }
+
+        /// <summary>
         /// Removes a section from this section by its name.
         /// </summary>
         /// <param name="sectionName">The case-sensitive name of the section to remove.</param>
@@ -146,7 +137,7 @@ namespace SharpConfig
             if ( string.IsNullOrEmpty( sectionName ) )
                 throw new ArgumentNullException( "sectionName" );
 
-            var section = GetSection( sectionName, false );
+            var section = GetSection( sectionName );
 
             if ( section == null )
             {
@@ -170,12 +161,6 @@ namespace SharpConfig
             {
                 throw new ArgumentException(
                     "The specified section does not exist in the section." );
-            }
-
-            if ( section == GlobalSection )
-            {
-                throw new InvalidOperationException(
-                    "The global section may not be removed." );
             }
 
             mSections.Remove( section );
@@ -291,16 +276,33 @@ namespace SharpConfig
         #region LoadBinary
 
         /// <summary>
-        /// Loads a configuration from a binary file using a specific reader.
+        /// Loads a configuration from a binary file using the <b>default</b> <see cref="BinaryReader"/>.
         /// </summary>
         ///
-        /// <param name="reader">  The reader to use. Specify null to use the default reader.</param>
         /// <param name="filename">The location of the configuration file.</param>
         ///
         /// <returns>
-        /// The configuration.
+        /// The loaded configuration.
         /// </returns>
-        public static Configuration LoadBinary( BinaryReader reader, string filename )
+        public static Configuration LoadBinary( string filename )
+        {
+            if (string.IsNullOrEmpty( filename ))
+                throw new ArgumentNullException( "filename" );
+
+            return DeserializeBinary( null, filename );
+        }
+
+        /// <summary>
+        /// Loads a configuration from a binary file using a specific <see cref="BinaryReader"/>.
+        /// </summary>
+        ///
+        /// <param name="filename">The location of the configuration file.</param>
+        /// <param name="reader">  The reader to use. Specify null to use the default <see cref="BinaryReader"/>.</param>
+        ///
+        /// <returns>
+        /// The loaded configuration.
+        /// </returns>
+        public static Configuration LoadBinary( string filename, BinaryReader reader )
         {
             if ( string.IsNullOrEmpty( filename ) )
                 throw new ArgumentNullException( "filename" );
@@ -309,16 +311,33 @@ namespace SharpConfig
         }
 
         /// <summary>
-        /// Loads a configuration from a binary stream, using a specific <see cref="BinaryReader"/>.
+        /// Loads a configuration from a binary stream, using the <b>default</b> <see cref="BinaryReader"/>.
         /// </summary>
         ///
-        /// <param name="reader">The reader to use. Specify null to use the default reader.</param>
         /// <param name="stream">The stream to load the configuration from.</param>
         ///
         /// <returns>
-        /// The configuration.
+        /// The loaded configuration.
         /// </returns>
-        public static Configuration LoadBinary( BinaryReader reader, Stream stream )
+        public static Configuration LoadBinary( Stream stream )
+        {
+            if (stream == null)
+                throw new ArgumentNullException( "stream" );
+
+            return DeserializeBinary( null, stream );
+        }
+
+        /// <summary>
+        /// Loads a configuration from a binary stream, using a specific <see cref="BinaryReader"/>.
+        /// </summary>
+        ///
+        /// <param name="stream">The stream to load the configuration from.</param>
+        /// <param name="reader">The reader to use. Specify null to use the default <see cref="BinaryReader"/>.</param>
+        ///
+        /// <returns>
+        /// The loaded configuration.
+        /// </returns>
+        public static Configuration LoadBinary( Stream stream, BinaryReader reader )
         {
             if ( stream == null )
                 throw new ArgumentNullException( "stream" );
@@ -443,21 +462,11 @@ namespace SharpConfig
             get { return mNumberFormat; }
             set
             {
-                if ( value == null )
+                if (value == null)
                     throw new ArgumentNullException( "value" );
 
                 mNumberFormat = value;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether SharpConfig
-        /// performs a case-sensitive search when searching for sections and settings.
-        /// </summary>
-        public static bool IsCaseSensitive
-        {
-            get { return mIsCaseSensitive; }
-            set { mIsCaseSensitive = value; }
         }
 
         /// <summary>
@@ -480,14 +489,6 @@ namespace SharpConfig
 
                 mValidCommentChars = value;
             }
-        }
-
-        /// <summary>
-        /// Gets the global section in the configuration.
-        /// </summary>
-        public Section GlobalSection
-        {
-            get { return GetSection( GlobalSectionName, false ); }
         }
 
         /// <summary>
@@ -534,7 +535,7 @@ namespace SharpConfig
         {
             get
             {
-                var section = GetSection( name, !mIsCaseSensitive );
+                var section = GetSection( name );
 
                 if ( section == null )
                 {
@@ -550,7 +551,7 @@ namespace SharpConfig
                     throw new ArgumentNullException( "value" );
 
                 // Check if there already is a section by that name.
-                var section = GetSection( name, false );
+                var section = GetSection( name );
 
                 int settingIndex = section != null ? mSections.IndexOf( section ) : -1;
 
@@ -567,14 +568,11 @@ namespace SharpConfig
             }
         }
 
-        private Section GetSection( string name, bool ignoreCase )
+        private Section GetSection( string name )
         {
-            var strCmp = ignoreCase ?
-                StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-
             foreach ( var section in mSections )
             {
-                if ( string.Equals( section.Name, name, strCmp ) )
+                if ( string.Equals( section.Name, name, StringComparison.OrdinalIgnoreCase ) )
                     return section;
             }
 

@@ -17,6 +17,7 @@ namespace Sample
     public partial class MainForm : Form
     {
         private Scintilla txtBox;
+        private Configuration currentConfig;
 
         public MainForm()
         {
@@ -41,7 +42,7 @@ namespace Sample
                 Configuration.ValidCommentChars = txtCommentChars.Text.ToCharArray();
 
                 // Load the configuration from the TextBox's text.
-                var cfg = Configuration.LoadFromText( txtBox.Text );
+                currentConfig = Configuration.LoadFromText( txtBox.Text );
 
                 // Stop measuring the time.
                 watch.Stop();
@@ -55,7 +56,7 @@ namespace Sample
                     Math.Round( timeMs, 2 ) ), Color.Green );
 
                 // List the contents of the configuration in the TreeView.
-                foreach ( var section in cfg )
+                foreach ( var section in currentConfig )
                 {
                     var sectionNode = new TreeNode( section.Name );
                     sectionNode.ForeColor = Color.Blue;
@@ -119,8 +120,7 @@ namespace Sample
 
             txtBox.Text = Properties.Resources.SampleCfg;
 
-            // HACK:
-            // parse the sample config, so the Stopwatch won't report any JIT time.
+            // HACK: parse the sample config, so the Stopwatch won't report any JIT time.
             ParseConfig();
 
             txtBox.TextChanged += OnConfigChanged;
@@ -190,6 +190,19 @@ namespace Sample
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     txtBox.Text = File.ReadAllText( dialog.FileName );
+                }
+            }
+        }
+
+        private void btnSaveConfig_Click( object sender, EventArgs e )
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "Configuration file|*.ini;*.cfg";
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    currentConfig.Save( dialog.FileName );
                 }
             }
         }

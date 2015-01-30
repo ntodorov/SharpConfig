@@ -299,32 +299,50 @@ namespace SharpConfig
         #region Public Methods
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        /// Gets a string that represents the setting. Comments not included.
         /// </summary>
-        ///
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
         public override string ToString()
         {
             return ToString( false );
         }
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        /// Gets a string that represents the setting.
         /// </summary>
         ///
-        /// <param name="includeComment">True to include, false to exclude the comment.</param>
-        ///
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
+        /// <param name="includeComment">Specify true to include the comments in the string; false otherwise.</param>
         public string ToString( bool includeComment )
         {
-            if ( includeComment && Comment != null )
-                return string.Format( "{0} = {1} {2}", Name, mRawValue, Comment.ToString() );
-            else
-                return string.Format( "{0} = {1}", Name, mRawValue );
+            if (includeComment)
+            {
+                bool hasPreComments = mPreComments != null && mPreComments.Count > 0;
+
+                string[] preCommentStrings = hasPreComments ?
+                    mPreComments.ConvertAll<string>( Comment.ConvertToString ).ToArray() : null;
+
+                if (Comment != null && hasPreComments)
+                {
+                    // Include inline comment and pre-comments.
+                    return string.Format( "{0}\n{1} = {2} {3}",
+                        string.Join( Environment.NewLine, preCommentStrings ),
+                        Name, mRawValue, Comment.ToString() );
+                }
+                else if (Comment != null)
+                {
+                    // Include only the inline comment.
+                    return string.Format( "{0} = {1} {2}", Name, mRawValue, Comment.ToString() );
+                }
+                else if (hasPreComments)
+                {
+                    // Include only the pre-comments.
+                    return string.Format( "{0}\n{1} = {2}",
+                        string.Join( Environment.NewLine, preCommentStrings ),
+                        Name, mRawValue );
+                }
+            }
+
+            // In every other case, include just the assignment in the string.
+            return string.Format( "{0} = {1}", Name, mRawValue );
         }
 
         #endregion

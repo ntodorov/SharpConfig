@@ -41,6 +41,8 @@
             this.picBoxLogo = new System.Windows.Forms.PictureBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.btnOpenConfig = new System.Windows.Forms.ToolStripButton();
+            this.btnSaveConfig = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mainPanel.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxLogo)).BeginInit();
@@ -149,7 +151,9 @@
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnOpenConfig});
+            this.btnOpenConfig,
+            this.toolStripSeparator1,
+            this.btnSaveConfig});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(950, 25);
@@ -158,13 +162,27 @@
             // 
             // btnOpenConfig
             // 
-            this.btnOpenConfig.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnOpenConfig.Image = global::Sample.Properties.Resources.open;
             this.btnOpenConfig.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOpenConfig.Name = "btnOpenConfig";
-            this.btnOpenConfig.Size = new System.Drawing.Size(23, 22);
+            this.btnOpenConfig.Size = new System.Drawing.Size(84, 22);
             this.btnOpenConfig.Text = "Open a file";
             this.btnOpenConfig.Click += new System.EventHandler(this.btnOpenConfig_Click);
+            // 
+            // btnSaveConfig
+            // 
+            this.btnSaveConfig.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnSaveConfig.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveConfig.Image")));
+            this.btnSaveConfig.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSaveConfig.Name = "btnSaveConfig";
+            this.btnSaveConfig.Size = new System.Drawing.Size(77, 22);
+            this.btnSaveConfig.Text = "Save to a file";
+            this.btnSaveConfig.Click += new System.EventHandler(this.btnSaveConfig_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // MainForm
             // 
@@ -208,6 +226,8 @@
         private System.Windows.Forms.PictureBox picBoxLogo;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton btnOpenConfig;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton btnSaveConfig;
     }
 }
 

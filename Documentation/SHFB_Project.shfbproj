@@ -35,11 +35,12 @@
     <HelpTitle>SharpConfig Class Reference</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\SharpConfig\bin\Release\net20\SharpConfig.dll" />
-<DocumentationSource sourceFile="..\SharpConfig\bin\Release\net20\SharpConfig.xml" /></DocumentationSources>
+      <DocumentationSource sourceFile="..\SharpConfig\bin\Release\SharpConfig.dll" />
+<DocumentationSource sourceFile="..\SharpConfig\bin\Release\SharpConfig.xml" /></DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
-<NamespaceSummaryItem name="SharpConfig" isDocumented="True">Welcome to the documentation of SharpConfig!</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="SharpConfig" isDocumented="True">Welcome to the documentation of SharpConfig!</NamespaceSummaryItem>
+    </NamespaceSummaries>
     <TransformComponentArguments>
       <Argument Key="logoFile" Value="sharpconfig_logo.png" />
       <Argument Key="logoHeight" Value="96" />
