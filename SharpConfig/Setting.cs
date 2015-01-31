@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014 Cemalettin Dervis
+ * Copyright (c) 2013-2015 Cemalettin Dervis
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -323,26 +323,26 @@ namespace SharpConfig
                 if (Comment != null && hasPreComments)
                 {
                     // Include inline comment and pre-comments.
-                    return string.Format( "{0}\n{1} = {2} {3}",
+                    return string.Format( "{0}\n{1}={2} {3}",
                         string.Join( Environment.NewLine, preCommentStrings ),
                         Name, mRawValue, Comment.ToString() );
                 }
                 else if (Comment != null)
                 {
                     // Include only the inline comment.
-                    return string.Format( "{0} = {1} {2}", Name, mRawValue, Comment.ToString() );
+                    return string.Format( "{0}={1} {2}", Name, mRawValue, Comment.ToString() );
                 }
                 else if (hasPreComments)
                 {
                     // Include only the pre-comments.
-                    return string.Format( "{0}\n{1} = {2}",
+                    return string.Format( "{0}\n{1}={2}",
                         string.Join( Environment.NewLine, preCommentStrings ),
                         Name, mRawValue );
                 }
             }
 
             // In every other case, include just the assignment in the string.
-            return string.Format( "{0} = {1}", Name, mRawValue );
+            return string.Format( "{0}={1}", Name, mRawValue );
         }
 
         #endregion
